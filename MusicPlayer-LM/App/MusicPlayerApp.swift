@@ -1,18 +1,11 @@
-//
-//  MusicPlayer_LMApp.swift
-//  MusicPlayer-LM
-//
-//  Created by Matthew Lopez on 1/17/26.
-//
-
 import SwiftUI
 import SwiftData
 
 @main
-struct MusicPlayer_LMApp: App {
+struct MusicPlayerApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Song.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,7 +18,7 @@ struct MusicPlayer_LMApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LibraryView()
         }
         .modelContainer(sharedModelContainer)
     }

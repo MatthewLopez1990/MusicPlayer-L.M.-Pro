@@ -10,9 +10,22 @@
 		1F528BC92F1C9BE000722C49 /* MusicPlayer-LM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MusicPlayer-LM.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1F528BF42F1C9DA400722C49 /* Exceptions for "MusicPlayer-LM" folder in "MusicPlayer-LM" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 1F528BC82F1C9BE000722C49 /* MusicPlayer-LM */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1F528BCB2F1C9BE000722C49 /* MusicPlayer-LM */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1F528BF42F1C9DA400722C49 /* Exceptions for "MusicPlayer-LM" folder in "MusicPlayer-LM" target */,
+			);
 			path = "MusicPlayer-LM";
 			sourceTree = "<group>";
 		};
@@ -251,8 +264,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4L9Y3U57M3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MusicPlayer-LM/Info.plist";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "\"Need access to play music.\" ";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -282,8 +298,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4L9Y3U57M3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MusicPlayer-LM/Info.plist";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "\"Need access to play music.\" ";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

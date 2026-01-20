@@ -1,0 +1,222 @@
+import Foundation
+import AVFoundation
+import Combine
+
+// MARK: - Audio Engine Manager
+final class AudioEngineManager: ObservableObject {
+    static let shared = AudioEngineManager()
+    
+    // MARK: - Engine Components
+    private let engine = AVAudioEngine()
+    private let playerNode = AVAudioPlayerNode()
+    
+    // Effects (The Synthesizer Chain)
+    private let equalizer = AVAudioUnitEQ(numberOfBands: 20)
+    private let timePitch = AVAudioUnitTimePitch()
+    private let reverb = AVAudioUnitReverb()
+    
+    // MARK: - Published Properties
+    @Published var isPlaying: Bool = false
+    @Published var currentTime: TimeInterval = 0.0
+    @Published var duration: TimeInterval = 0.0
+    
+    private var currentFile: AVAudioFile?
+    private var progressTimer: Timer?
+    
+    let audioAnalyzer = AudioAnalyzer()
+    
+    // MARK: - Initialization
+    private init() {
+        setupAudioGraph()
+    }
+    
+    private func setupAudioGraph() {
+        // Attach nodes
+        engine.attach(playerNode)
+        engine.attach(equalizer)
+        engine.attach(timePitch)
+        engine.attach(reverb)
+        
+        setupEqualizer()
+        
+        // Reverb
+        reverb.loadFactoryPreset(.mediumHall)
+        reverb.wetDryMix = 0
+        
+        engine.connect(playerNode, to: equalizer, format: nil)
+        engine.connect(equalizer, to: timePitch, format: nil)
+        engine.connect(timePitch, to: reverb, format: nil)
+        engine.connect(reverb, to: engine.mainMixerNode, format: nil)
+        
+        let mixerFormat = engine.mainMixerNode.outputFormat(forBus: 0)
+        engine.mainMixerNode.installTap(onBus: 0, bufferSize: 1024, format: mixerFormat) { [weak self] buffer, _ in
+            self?.audioAnalyzer.analyzeTap(buffer: buffer)
+        }
+        
+        engine.prepare()
+        
+        do {
+            try engine.start()
+        } catch {
+            print("[AudioEngine] Error starting engine: \(error.localizedDescription)")
+        }
+    }
+    
+    // MARK: - Playback Control
+    func play(url: URL) {
+        do {
+            let file = try AVAudioFile(forReading: url)
+            currentFile = file
+            
+            // Calculate duration
+            duration = Double(file.length) / file.processingFormat.sampleRate
+            
+            playerNode.stop()
+            playerNode.scheduleFile(file, at: nil) { [weak self] in
+                DispatchQueue.main.async {
+                    self?.isPlaying = false
+                    self?.currentTime = 0.0
+                    self?.stopProgressUpdates()
+                }
+            }
+            playerNode.play()
+            
+            DispatchQueue.main.async {
+                self.isPlaying = true
+                self.currentTime = 0.0
+            }
+            
+            startProgressUpdates()
+        } catch {
+            print("[AudioEngine] Error playing file: \(error.localizedDescription)")
+        }
+    }
+    
+    func pause() {
+        playerNode.pause()
+        isPlaying = false
+        stopProgressUpdates()
+    }
+    
+    func resume() {
+        if !playerNode.isPlaying {
+            playerNode.play()
+            isPlaying = true
+            startProgressUpdates()
+        }
+    }
+    
+    func seek(to time: TimeInterval) {
+        guard let file = currentFile else { return }
+        
+        let sampleRate = file.processingFormat.sampleRate
+        let framePosition = AVAudioFramePosition(time * sampleRate)
+        
+        guard framePosition >= 0 && framePosition < file.length else { return }
+        
+        let wasPlaying = playerNode.isPlaying
+        playerNode.stop()
+        
+        let framesToRead = AVAudioFrameCount(file.length - framePosition)
+        
+        playerNode.scheduleSegment(file, startingFrame: framePosition, frameCount: framesToRead, at: nil) { [weak self] in
+            DispatchQueue.main.async {
+                self?.isPlaying = false
+                self?.currentTime = 0.0
+                self?.stopProgressUpdates()
+            }
+        }
+        
+        if wasPlaying {
+            playerNode.play()
+            startProgressUpdates()
+        }
+        
+        DispatchQueue.main.async {
+            self.currentTime = time
+        }
+    }
+    
+    private func startProgressUpdates() {
+        stopProgressUpdates()
+        
+        progressTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
+            self?.updateProgress()
+        }
+    }
+    
+    private func stopProgressUpdates() {
+        progressTimer?.invalidate()
+        progressTimer = nil
+    }
+    
+    private func updateProgress() {
+        guard let nodeTime = playerNode.lastRenderTime,
+              let playerTime = playerNode.playerTime(forNodeTime: nodeTime) else {
+            return
+        }
+        
+        let sampleRate = currentFile?.processingFormat.sampleRate ?? 44100.0
+        let currentSample = Double(playerTime.sampleTime)
+        let newTime = currentSample / sampleRate
+        
+        DispatchQueue.main.async {
+            self.currentTime = newTime
+        }
+    }
+    
+    // MARK: - Synthesizer Controls (Effects)
+    
+    /// Adjust Pitch (cents: -2400 to 2400)
+    func setPitch(_ pitch: Float) {
+        timePitch.pitch = pitch
+    }
+    
+    /// Adjust Speed (rate: 1/32 to 32)
+    func setSpeed(_ rate: Float) {
+        timePitch.rate = rate
+    }
+    
+    /// Adjust Reverb (mix: 0 to 100)
+    func setReverb(_ mix: Float) {
+        reverb.wetDryMix = mix
+    }
+    
+    /// Adjust EQ Band (band: 0=Bass, 1=Mid, 2=Treble, gain: -96 to 24 dB)
+    func setEQ(band: Int, gain: Float) {
+        guard band >= 0 && band < 20 else { return }
+        equalizer.bands[band].gain = gain
+    }
+    
+    func getEQFrequency(band: Int) -> Float {
+        guard band >= 0 && band < 20 else { return 0 }
+        return equalizer.bands[band].frequency
+    }
+    
+    func getEQGain(band: Int) -> Float {
+        guard band >= 0 && band < 20 else { return 0 }
+        return equalizer.bands[band].gain
+    }
+    
+    private func setupEqualizer() {
+        let frequencies: [Float] = [
+            32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000,
+            31.25, 62.5, 93.75, 187.5, 375, 750, 1500, 3000, 6000, 12000
+        ].sorted()
+        
+        for (index, band) in equalizer.bands.enumerated() {
+            band.frequency = frequencies[index]
+            band.bandwidth = 1.0
+            band.bypass = false
+            band.gain = 0.0
+            
+            if index == 0 {
+                band.filterType = .lowShelf
+            } else if index == 19 {
+                band.filterType = .highShelf
+            } else {
+                band.filterType = .parametric
+            }
+        }
+    }
+}
