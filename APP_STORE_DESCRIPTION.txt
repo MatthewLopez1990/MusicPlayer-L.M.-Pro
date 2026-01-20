@@ -1,0 +1,33 @@
+# App Store Description
+
+**App Name:** MusicPlayer-L.M. Pro
+**Subtitle:** Professional EQ & Visualizer
+
+**Description:**
+
+Rediscover your music collection with MusicPlayer-L.M. Pro, the ultimate offline audio player for iOS.
+
+MusicPlayer-L.M. Pro isn't just about playing songs; it's about shaping them. Whether you want to boost the bass on a workout track, slow down a song to learn the chords, or simply get lost in mesmerizing, audio-reactive visuals, this app gives you the tools to do it.
+
+**✨ KEY FEATURES:**
+
+🎛️ **Professional Audio Control**
+*   **20-Band Equalizer:** Fine-tune your sound with precision. Includes presets for Rock, Pop, Jazz, Electronic, and more.
+*   **Real-Time Effects:** Change the **Pitch**, **Speed**, and **Reverb** of any song instantly. Perfect for musicians, dancers, or just having fun.
+
+🎨 **Immersive Visualizers**
+*   Experience your music with three stunning, randomized visual themes:
+    *   **Synthwave 80s:** Retro neon sunsets and gridlines that pulse to the beat.
+    *   **Particle Constellation:** A starry night sky that connects and reacts to the melody.
+    *   **Psychedelic Tie-Dye:** Swirling colors that shift with the rhythm.
+
+📂 **Your Library, Your Way**
+*   **Metadata Editor:** Fix missing artist names or titles directly within the app.
+*   **Secure & Private:** Works entirely offline with your local files. We do not collect data, track usage, or require accounts.
+*   **Background Playback:** Keep the music going even when your screen is locked.
+
+**🚀 PRIVACY FIRST**
+MusicPlayer-L.M. Pro respects your privacy. We do not access your contacts, location, or browse history. We only access the audio files you explicitly choose to play.
+
+---
+*Download MusicPlayer-L.M. Pro today and hear your music in a whole new way.*
