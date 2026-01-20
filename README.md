@@ -34,12 +34,15 @@
 ## 🚀 How to Install
 
 ### Option 1: Using Xcode (Free)
+**Prerequisites:** You must have a Mac with **Xcode** installed (download for free from the Mac App Store).
+
 1.  **Download** this repository (Code -> Download ZIP) or clone it.
-2.  Open `MusicPlayer-LM.xcodeproj` in **Xcode** (Mac only).
-3.  Connect your iPhone via USB.
-4.  Select your phone in the top-left device selector.
-5.  Press **Cmd+R** (or the Play button) to build and install.
-6.  *Note:* You may need to go to **Settings -> General -> VPN & Device Management** on your phone to "Trust" the app after installing.
+2.  Launch the **Xcode** application on your Mac.
+3.  Open the `MusicPlayer-LM.xcodeproj` file from within Xcode.
+4.  Connect your iPhone to your Mac via USB cable.
+5.  In Xcode's top toolbar, click the device selector (usually says "Any iOS Device" or a simulator name) and choose your connected iPhone.
+6.  Press **Cmd+R** on your keyboard or click the **Play (▶️)** button in the top-left corner of Xcode to build and install the app.
+7.  *Note:* On your iPhone, you may need to go to **Settings -> General -> VPN & Device Management** to "Trust" the app developer certificate before it will launch.
 
 ### Option 2: App Store Deployment
 If you are the developer deploying this app:
